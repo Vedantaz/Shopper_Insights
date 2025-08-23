@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role{
+  ADMIN
+  USER
+  OWNER
+}
+
+model User{
+  id            Int         @id @default(autoincrement())
+  name          String      @db.VarChar(60)
+  email         String      @unique @db.VarChar(100)
+  address       String      @db.VarChar(400)
+  passwordHash  String  
+  role          Role        @default(USER)
+  store         Store?  
+  ratings       Rating[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+}
+
+model Store {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(60)
+  email     String   @db.VarChar(100)
+  address   String   @db.VarChar(400)
+  ownerId   Int?     @unique
+  owner     User?    @relation(fields: [ownerId], references: [id])
+  ratings   Rating[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Rating {
+  id        Int      @id @default(autoincrement())
+  value     Int
+  userId    Int
+  storeId   Int
+  user      User     @relation(fields: [userId], references: [id])
+  store     Store    @relation(fields: [storeId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, storeId]) // one rating per user per store
+}
