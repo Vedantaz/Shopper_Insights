@@ -1,15 +1,32 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Req,
+} from '@nestjs/common';
 import { RatingsService } from './ratings.service';
 import { CreateRatingDto } from './dto/create-rating.dto';
 import { UpdateRatingDto } from './dto/update-rating.dto';
+import { JwtAuthGuard } from 'src/auth/jwt.guard';
 
 @Controller('ratings')
+@UseGuards(JwtAuthGuard)
 export class RatingsController {
   constructor(private readonly ratingsService: RatingsService) {}
 
   @Post()
-  create(@Body() createRatingDto: CreateRatingDto) {
-    return this.ratingsService.create(createRatingDto);
+  create(@Req() req, @Body() createRatingDto: CreateRatingDto) {
+    return this.ratingsService.upsert(req.user.userId, createRatingDto);
+  }
+
+  @Patch()
+  update(@Req() req, @Body() updateRatingDto: CreateRatingDto) {
+    return this.ratingsService.upsert(req.user.userId, updateRatingDto);
   }
 
   @Get()
@@ -17,18 +34,13 @@ export class RatingsController {
     return this.ratingsService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.ratingsService.findOne(+id);
+  @Get()
+  findOne(@Req() req) {
+    return this.ratingsService.findOne(req.user.userId);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRatingDto: UpdateRatingDto) {
-    return this.ratingsService.update(+id, updateRatingDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.ratingsService.remove(+id);
+  @Delete()
+  remove(@Req() req) {
+    return this.ratingsService.remove(req.user.userId);
   }
 }

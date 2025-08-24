@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Query,
+  Req,
 } from '@nestjs/common';
 import { StoresService } from './stores.service';
 import { CreateStoreDto } from './dto/create-store.dto';
@@ -22,9 +23,14 @@ export class StoresController {
   constructor(private readonly storesService: StoresService) {}
 
   @UseGuards(JwtAuthGuard)
-  @Get()
+  @Get('listUsers')
   async list(@Query() dto: ListUsersDto) {
     return this.storesService.list(dto);
+  }
+
+  @Get('owner/ratings')
+  ownerRatings(@Req() req) {
+    return this.storesService.ownerRatings(req.user.userId);
   }
 
   @Post()
@@ -32,7 +38,7 @@ export class StoresController {
     return this.storesService.create(createStoreDto);
   }
 
-  @Get()
+  @Get('all')
   findAll() {
     return this.storesService.findAll();
   }

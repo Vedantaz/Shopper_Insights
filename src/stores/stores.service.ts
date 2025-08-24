@@ -2,9 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { CreateStoreDto } from './dto/create-store.dto';
 import { UpdateStoreDto } from './dto/update-store.dto';
 import { ListUsersDto } from './dto/list-users.dto';
+import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
 export class StoresService {
+  constructor(private readonly prisma: PrismaService) {}
   create(createStoreDto: CreateStoreDto) {
     return 'This action adds a new store';
   }
@@ -74,5 +76,36 @@ export class StoresService {
         totalPages: Math.ceil(total / (pageSize ?? 10)),
       },
     };
+  }
+
+  async ownerRatings(ownerUserId: number) {
+    const store = await this.prisma.store.findFirst({
+      where: { ownerId: ownerUserId },
+      include: {
+        ratings: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    if (!store) return { items: [], average: 0 };
+    const avg = store.ratings.length
+      ? store.ratings.reduce((a, r) => a + r.value, 0) / store.ratings.length
+      : 0;
+    const items = store.ratings.map((r) => ({
+      userId: r.userId,
+      name: r.user.name,
+      email: r.user.email,
+      value: r.value,
+      when: r.updatedAt,
+    }));
+    return { items, average: +avg.toFixed(2) };
   }
 }
