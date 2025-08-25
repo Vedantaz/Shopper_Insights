@@ -7,24 +7,40 @@ import { PrismaService } from 'src/prisma.service';
 @Injectable()
 export class StoresService {
   constructor(private readonly prisma: PrismaService) {}
-  create(createStoreDto: CreateStoreDto) {
-    return 'This action adds a new store';
+  async create(createStoreDto: CreateStoreDto) {
+    return await this.prisma.store.create({
+      data: {
+        name: createStoreDto.name,
+        email: createStoreDto.email,
+        address: createStoreDto.address,
+        ownerId: createStoreDto.ownerId,
+      },
+    });
   }
 
-  findAll() {
-    return `This action returns all stores`;
+  async findAll() {
+    return await this.prisma.store.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} store`;
+  async findOne(id: number) {
+    return await this.prisma.store.findUnique({ where: { id: id } });
   }
 
-  update(id: number, updateStoreDto: UpdateStoreDto) {
-    return `This action updates a #${id} store`;
+  update(id: number, data: UpdateStoreDto) {
+    return this.prisma.store.update({
+      where: { id },
+      data,
+      select: {
+        name: true,
+        email: true,
+        address: true,
+        ownerId: true,
+      },
+    });
   }
 
   remove(id: number) {
-    return `This action removes a #${id} store`;
+    return this.prisma.store.delete({ where: { id: id } });
   }
 
   async list(dto: ListUsersDto) {

@@ -14,9 +14,10 @@ import { Roles } from '../common/roles.decorator';
 import { CreateUserDto, OwnerStoreDto } from './dto/admin-user.dto';
 import { ListUsersDto } from 'src/stores/dto/list-users.dto';
 import { StoresService } from 'src/stores/stores.service';
+import { ListStoresDto } from 'src/stores/dto/list-store.dto';
 
-@UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('ADMIN')
+// @UseGuards(JwtAuthGuard, RolesGuard)
+// @Roles('ADMIN')
 @Controller('admin')
 export class AdminController {
   constructor(
@@ -24,20 +25,28 @@ export class AdminController {
     private storeService: StoresService,
   ) {}
 
-  @Get('dashboard') dashboard() {
-    return this.adminService.dashboard();
+  @Get('dashboard')
+  async dashboard() {
+    const data = await this.adminService.dashboard();
+    return { message: 'Data received successfully on dashboard', data };
   }
 
-  @Post('users') createUser(
-    @Body() body: CreateUserDto,
-    ownerStore?: OwnerStoreDto,
-  ) {
-    return this.adminService.createUser(body);
+  @Post('users-owners-signup')
+  async signUpUser(@Body() body: CreateUserDto, ownerStore?: OwnerStoreDto) {
+    const { user, store } = await this.adminService.signUpUser(body);
+    let message = 'User signup successfully!';
+    if (user.role === 'OWNER') {
+      message = store
+        ? 'Owner and store created successfully!'
+        : 'Owner created successfully, but store was not provided.';
+    }
+    return { message, data: { user, store } };
   }
 
-  @Get('users')
-  listUsers(@Query() q: ListUsersDto) {
-    return this.storeService.list(q);
+  @Get('list-users')
+  async listUsers(@Query() q: ListUsersDto) {
+    const data = await this.storeService.list(q);
+    return { message: 'Listing all users.', data };
   }
 
   @Get('users/:id')
@@ -45,8 +54,8 @@ export class AdminController {
     return this.adminService.getUser(+id);
   }
 
-  @Get('stores')
-  listStores(@Body() userData: CreateUserDto, @Query() query: ListUsersDto) {
-    return this.adminService.listStores(userData, query);
+  @Get('get-stores')
+  listStores(@Query() query: ListStoresDto) {
+    return this.adminService.listStores(query);
   }
 }

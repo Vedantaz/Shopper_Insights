@@ -22,18 +22,18 @@ export class RatingsService {
   }
 
   findAll() {
-    return `This action returns all ratings`;
+    return this.prisma.rating.findMany();
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} rating`;
+    return this.prisma.rating.findUnique({ where: { id: id } });
   }
 
   update(id: number, updateRatingDto: UpdateRatingDto) {
-    return `This action updates a #${id} rating`;
+    return this.prisma.rating.update({ where: { id }, data: updateRatingDto });
   }
 
   remove(id: number) {
-    return `This action removes a #${id} rating`;
+    return this.prisma.rating.delete({ where: { id: id } });
   }
 }

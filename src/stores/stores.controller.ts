@@ -22,39 +22,46 @@ import { RolesGuard } from 'src/common/roles.guard';
 export class StoresController {
   constructor(private readonly storesService: StoresService) {}
 
-  @UseGuards(JwtAuthGuard)
-  @Get('listUsers')
+  // @UseGuards(JwtAuthGuard)
+  @Get('list-users')
   async list(@Query() dto: ListUsersDto) {
     return this.storesService.list(dto);
   }
 
-  @Get('owner/ratings')
+  @Get('/owner/ratings')
   ownerRatings(@Req() req) {
     return this.storesService.ownerRatings(req.user.userId);
   }
 
-  @Post()
-  create(@Body() createStoreDto: CreateStoreDto) {
-    return this.storesService.create(createStoreDto);
+  @Post('/create')
+  async create(@Body() createStoreDto: CreateStoreDto) {
+    const data = await this.storesService.create(createStoreDto);
+    return { message: 'Store created successfully', data };
   }
 
-  @Get('all')
-  findAll() {
-    return this.storesService.findAll();
+  @Get('/get-all-stores')
+  async findAll() {
+    const data = await this.storesService.findAll();
+    return { message: 'Retrieved all stores successfully!', data };
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.storesService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return await this.storesService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateStoreDto: UpdateStoreDto) {
-    return this.storesService.update(+id, updateStoreDto);
+  @Patch('update/:id')
+  async update(
+    @Param('id') id: string,
+    @Body() updateStoreDto: UpdateStoreDto,
+  ) {
+    const data = await this.storesService.update(+id, updateStoreDto);
+    return { message: 'Store updated successfully!', data };
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.storesService.remove(+id);
+  @Delete('delete/:id')
+  async remove(@Param('id') id: string) {
+    const data = await this.storesService.remove(+id);
+    return { message: 'Store deleted successfully!', data };
   }
 }

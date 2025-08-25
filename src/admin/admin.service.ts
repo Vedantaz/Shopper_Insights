@@ -3,6 +3,7 @@ import { PrismaService } from 'src/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto, OwnerStoreDto } from './dto/admin-user.dto';
 import { ListUsersDto } from 'src/stores/dto/list-users.dto';
+import { ListStoresDto } from 'src/stores/dto/list-store.dto';
 
 @Injectable()
 export class AdminService {
@@ -17,7 +18,7 @@ export class AdminService {
     return { totalUsers: users, totalStores: stores, totalRatings: ratings };
   }
 
-  async createUser(body: CreateUserDto) {
+  async signUpUser(body: CreateUserDto) {
     const hash = await bcrypt.hash(body.password, 10);
     const user = await this.prisma.user.create({
       data: {
@@ -29,8 +30,11 @@ export class AdminService {
       },
       select: { id: true, name: true, email: true, address: true, role: true },
     });
+
+    let store = {};
+
     if (body.role === 'OWNER' && body.ownerStore) {
-      await this.prisma.store.create({
+      store = await this.prisma.store.create({
         data: {
           name: body.ownerStore.name,
           email: body.ownerStore.email,
@@ -39,7 +43,7 @@ export class AdminService {
         },
       });
     }
-    return user;
+    return { user, store };
   }
 
   async listUsers(userData: CreateUserDto, data: ListUsersDto) {
@@ -120,9 +124,17 @@ export class AdminService {
     return u;
   }
 
-  async listStores(userData: CreateUserDto, data: ListUsersDto) {
-    const { name, email, address } = userData;
-    const { sortBy = 'id', sortOrder, page = 1, pageSize = 10 } = data;
+  async listStores(data: ListStoresDto) {
+    const {
+      name,
+      email,
+      address,
+      sortBy = 'id',
+      sortOrder = 'asc',
+      page = 1,
+      pageSize = 10,
+    } = data;
+
     const where: any = {
       AND: [
         name ? { name: { contains: name, mode: 'insensitive' } } : {},
@@ -130,6 +142,7 @@ export class AdminService {
         address ? { address: { contains: address, mode: 'insensitive' } } : {},
       ],
     };
+
     const [items, total] = await this.prisma.$transaction([
       this.prisma.store.findMany({
         where,
@@ -140,10 +153,12 @@ export class AdminService {
       }),
       this.prisma.store.count({ where }),
     ]);
+
     const mapped = items.map((s) => {
       const avg = s.ratings.length
         ? s.ratings.reduce((a, r) => a + r.value, 0) / s.ratings.length
         : 0;
+
       return {
         id: s.id,
         name: s.name,
@@ -152,6 +167,7 @@ export class AdminService {
         rating: +avg.toFixed(2),
       };
     });
+
     return { items: mapped, total, page: +page, pageSize: +pageSize };
   }
 }
