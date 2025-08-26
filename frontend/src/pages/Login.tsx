@@ -19,9 +19,12 @@ const Login = () => {
     e.preventDefault();
     try {
       const res = await axiosInstance.post("/auth/login", form);
-      localStorage.setItem("token", res.data.token);
+      console.log(res);
+      localStorage.setItem("token", res.data.accessToken);
       login(res.data.user);
-      navigate("/dashboard");
+      if (res.data.role === "admin") navigate("/admin/dashboard");
+      else if (res.data.role === "owner") navigate("/owner/dashboard");
+      else navigate("/user/stores");
     } catch (err: any) {
       setError(err.response?.data?.message || "Login failed");
     }

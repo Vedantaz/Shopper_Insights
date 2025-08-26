@@ -6,17 +6,14 @@ import { PrismaService } from 'src/prisma.service';
 @Injectable()
 export class RatingsService {
   constructor(private prisma: PrismaService) {}
-  create(createRatingDto: CreateRatingDto) {
-    return 'This action adds a new rating';
-  }
 
-  upsert(userId: number, data: CreateRatingDto) {
+  upsert(userId: number, storeId: number, data: CreateRatingDto) {
     if (data.value < 1 || data.value > 5)
       throw new BadRequestException('Rating must be 1-5');
     return this.prisma.rating.upsert({
-      where: { userId_storeId: { userId, storeId: data.storeId } },
+      where: { userId_storeId: { userId, storeId: storeId } },
       update: { value: data.value },
-      create: { userId, storeId: data.storeId, value: data.value },
+      create: { userId, storeId: storeId, value: data.value },
       select: { id: true, value: true, storeId: true, userId: true },
     });
   }

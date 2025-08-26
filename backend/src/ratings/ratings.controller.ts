@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Req,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { RatingsService } from './ratings.service';
 import { CreateRatingDto } from './dto/create-rating.dto';
@@ -19,19 +20,31 @@ import { JwtAuthGuard } from 'src/auth/jwt.guard';
 export class RatingsController {
   constructor(private readonly ratingsService: RatingsService) {}
 
-  @Post('give-rating')
-  async giveRating(@Req() req, @Body() createRatingDto: CreateRatingDto) {
-    console.log(req.user.userId);
+  @Post(':id/give-rating')
+  async giveRating(
+    @Param('id', ParseIntPipe) storeId: number,
+    @Req() req,
+    @Body() createRatingDto: CreateRatingDto,
+  ) {
     const data = await this.ratingsService.upsert(
       req.user.userId,
+      storeId,
       createRatingDto,
     );
     return { message: 'Rating has been given to store.', data };
   }
 
   @Patch('update-rating')
-  update(@Req() req, @Body() updateRatingDto: CreateRatingDto) {
-    const data = this.ratingsService.upsert(req.user.userId, updateRatingDto);
+  update(
+    @Param('id', ParseIntPipe) storeId: number,
+    @Req() req,
+    @Body() updateRatingDto: CreateRatingDto,
+  ) {
+    const data = this.ratingsService.upsert(
+      req.user.userId,
+      storeId,
+      updateRatingDto,
+    );
     return { message: 'Rating has been updated to store.', data };
   }
 
