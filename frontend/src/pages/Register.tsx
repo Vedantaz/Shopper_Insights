@@ -12,7 +12,7 @@ const Signup = () => {
     address: "",
     password: "",
   });
-  const{login} = useAuth();
+  const { login } = useAuth();
   const [error, setError] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,84 +27,98 @@ const Signup = () => {
       localStorage.setItem("token", res.data.token);
       login(res.data.user);
 
-      // redirect based on the role
       if (res.data.user.role === "ADMIN") navigate("/admin/dashboard");
       else if (res.data.user.role === "OWNER") navigate("/owner/dashboard");
       else navigate("/user/stores");
-
-      // navigate("/login");
     } catch (err: any) {
       setError(err.response?.data?.message || "Signup failed");
     }
   };
 
-  const handleSignup = async (name:string, email:string, password:string, address:string)=>{
-    try{
-      const res = await axiosInstance.post("/auth/register", {name, email, password, address});
-      login(res.data.user);
-
-      if (res.data.role === "admin") navigate("/admin/dashboard");
-      else if (res.data.role === "owner") navigate("/owner/dashboard");
-      else navigate("/user/stores");
-    }catch (err) {
-      console.error("SignUp failed", err);
-    };
-  }
-
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-50">
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-blue-100 to-purple-100">
       <form
         onSubmit={handleSubmit}
-        className="bg-white shadow-md rounded p-6 w-96"
+        className="bg-white shadow-lg rounded-xl p-8 w-96 transform transition-all duration-300 hover:shadow-2xl"
       >
-        <h2 className="text-2xl font-bold mb-4">Signup</h2>
-        {error && <p className="text-red-500 mb-2">{error}</p>}
-        <input
-          type="text"
-          name="name"
-          placeholder="Name"
-          value={form.name}
-          onChange={handleChange}
-          className="w-full border p-2 mb-3 rounded"
-        />
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={form.email}
-          onChange={handleChange}
-          className="w-full border p-2 mb-3 rounded"
-        />
-        <input
-          type="text"
-          name="address"
-          placeholder="Address"
-          value={form.address}
-          onChange={handleChange}
-          className="w-full border p-2 mb-3 rounded"
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={form.password}
-          onChange={handleChange}
-          className="w-full border p-2 mb-3 rounded"
-        />
+        <h2 className="text-3xl font-extrabold mb-6 text-center text-gray-800">
+          Create an Account ✨
+        </h2>
+
+        {error && (
+          <p className="text-red-500 mb-6 text-sm text-center">{error}</p>
+        )}
+
+        <div className="mb-6">
+          <label className="block text-gray-600 mb-2 text-sm font-medium">
+            Name
+          </label>
+          <input
+            type="text"
+            name="name"
+            placeholder="Enter your name"
+            value={form.name}
+            onChange={handleChange}
+            className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition"
+          />
+        </div>
+
+        <div className="mb-6">
+          <label className="block text-gray-600 mb-2 text-sm font-medium">
+            Email
+          </label>
+          <input
+            type="email"
+            name="email"
+            placeholder="Enter your email"
+            value={form.email}
+            onChange={handleChange}
+            className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition"
+          />
+        </div>
+
+        <div className="mb-6">
+          <label className="block text-gray-600 mb-2 text-sm font-medium">
+            Address
+          </label>
+          <input
+            type="text"
+            name="address"
+            placeholder="Enter your address"
+            value={form.address}
+            onChange={handleChange}
+            className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition"
+          />
+        </div>
+
+        <div className="mb-2">
+          <label className="block text-gray-600 mb-2 text-sm font-medium">
+            Password
+          </label>
+          <input
+            type="password"
+            name="password"
+            placeholder="Enter your password"
+            value={form.password}
+            onChange={handleChange}
+            className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition"
+          />
+        </div>
+
         <button
           type="submit"
-          className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600"
+          className="mt-8 w-full bg-green-500 text-white py-3 rounded-lg font-semibold text-lg shadow-md hover:bg-green-600 hover:shadow-lg transition"
         >
-          Signup
+          Sign up
         </button>
-      </form>
 
-       <button
-        onClick={() => handleSignup("Test User", "test@test.com", "Password@123", "123 Demo Street")}
-        className="ml-4 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
-      >
-        Demo Signup
-      </button>
+        <p className="mt-2 text-sm text-gray-500 text-center">
+          Already have an account?{" "}
+          <a href="/login" className="text-blue-500 hover:underline">
+            Login
+          </a>
+        </p>
+      </form>
     </div>
   );
 };

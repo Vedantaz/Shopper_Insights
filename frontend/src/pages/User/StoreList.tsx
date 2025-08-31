@@ -13,11 +13,6 @@ interface Store{
 const StoreList = () => {
   const [stores, setStores] = useState<Store[]>([]);
   const [userRatings, setUserRatings] = useState<{ [key: number]: number }>({});
-  // const stores = [
-  //   { id: 1, name: "Store A", address: "Mumbai", rating: 4.2 },
-  //   { id: 2, name: "Store B", address: "Pune", rating: 3.8 },
-  // ];
-
 useEffect(() => {
   const fetchStores = async () => {
     try {
@@ -32,13 +27,27 @@ useEffect(() => {
   fetchStores(); 
 }, []);
 
+useEffect(() => {
+  console.log("Updated userRatings:", userRatings);
+}, [userRatings]);
+
   const submitRating = async(storeId:number, rating:number)=>{
-    await axiosInstance.post(`/ratings/${storeId}/give-rating`, {value:rating})
+    try{
+      await axiosInstance.post(`/ratings/${storeId}/give-rating`, {value:rating})
     setStores((prev) =>
       prev.map((s) =>
         s.id === storeId ? { ...s, userRating: rating } : s
       )
     );
+
+    setUserRatings((prev)=>({
+      ...prev,
+      [storeId]:rating
+    }))
+    console.log(userRatings, rating);
+    }catch (err) {
+    console.error("Failed to submit rating:", err);
+  }
   }
 
   const handleRate = (storeId: number, value: number) => {
@@ -46,23 +55,36 @@ useEffect(() => {
   };
 
   return (
-    <div className="p-4">
-      <h2 className="text-xl font-bold">All Stores</h2>
-      <div className="mt-4 space-y-4">
+    <div className="flex justify-center items-center min-h-screen bg-gray-50">
+      <div className="w-full max-w-4xl p-6">
+        <div className="bg-red-500 text-white p-4">TEST BOX</div>
+      <h2 className="text-xl font-bold mb-4">All Stores</h2>  
+      <div className="space-y-4 w-full">
         {stores.map((store) => (
-          <div key={store.id} className="p-4 border rounded shadow">
-            <h3 className="font-semibold">{store.name}</h3>
-            <p>{store.address}</p>
-            <p>Overall Rating: {store.rating}</p>
-            <p>Your Rating:</p>
-            <RatingStars
-              rating={store.userRating || 0}
-              onRate={(val) => submitRating(store.id, val)}
-            />
+          <div
+            key={store.id}
+            className="p-4 border rounded shadow bg-white flex items-center justify-between w-full"
+          >
+          <div className="grid grid-cols-3 gap-8 flex-1">
+              <span className="font-semibold">{store.name}</span>
+              <span className="text-sm text-gray-500">{store.address}</span>
+              <span className="text-sm">Overall Rating: {store.rating}</span>
+          </div>
+
+            <div className="flex flex-col items-center ml-6">
+              <RatingStars
+                rating={store.userRating || 0}
+                onRate={(val) => submitRating(store.id, val)}
+              />
+            </div>
           </div>
         ))}
       </div>
+
+      </div>
+
     </div>
+
   );
 };
 

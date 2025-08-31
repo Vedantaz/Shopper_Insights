@@ -1,6 +1,6 @@
 
 import { Routes, Route } from "react-router-dom";
-import Navbar from "./components/NavBar";
+import Navbar from "./components/Navbar";
 import Login from "./pages/Login";
 import Signup from "./pages/Register";
 import ProtectedRoute from "./auth/ProtectedRoute";
