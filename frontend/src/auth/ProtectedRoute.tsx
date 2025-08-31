@@ -4,8 +4,10 @@ import type { ReactElement } from 'react';
 
 export default function ProtectedRoute({ children, role }: { children: ReactElement; role?: string}) {
   const token = localStorage.getItem('token');
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+  if (loading) return <div>Loading...</div>;
+  
   if (!token) return <Navigate to="/login" replace />;
-  if (role && user && !role.includes(user.role)) return <Navigate to="/" replace />;
+  if (role && user && !role.includes(user.role)) return <Navigate to="/login" replace />;
   return children;
 }

@@ -24,12 +24,9 @@ const Signup = () => {
     try {
       const res = await axiosInstance.post("/auth/signup", form);
 
-      localStorage.setItem("token", res.data.token);
       login(res.data.user);
-
-      if (res.data.user.role === "ADMIN") navigate("/admin/dashboard");
-      else if (res.data.user.role === "OWNER") navigate("/owner/dashboard");
-      else navigate("/user/stores");
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+      navigate("/login");
     } catch (err: any) {
       setError(err.response?.data?.message || "Signup failed");
     }

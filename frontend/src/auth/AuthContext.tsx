@@ -1,5 +1,5 @@
 // src/context/AuthContext.tsx
-import { createContext, useContext, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
 type User = {
   id: number;
@@ -12,24 +12,33 @@ type AuthContextType = {
   user: User;
   login: (userData: User) => void;
   logout: () => void;
+  loading:boolean
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User>(null);
+  const [loading,setLoading] = useState(true);
 
   const login = (userData: User) => {
     setUser(userData);
   };
 
+  useEffect(()=>{
+    const storedUser = localStorage.getItem("user");
+    if(storedUser) setUser(JSON.parse(storedUser));
+    setLoading(false);
+  }, [])
+
   const logout = () => {
     setUser(null);
+    localStorage.removeItem("user");
     localStorage.removeItem("token");
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

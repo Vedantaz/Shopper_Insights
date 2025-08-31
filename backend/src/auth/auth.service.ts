@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
@@ -11,7 +15,13 @@ export class AuthService {
     private jwt: JwtService,
   ) {}
 
-  async register(dto: RegisterDto) {
+  async signup(dto: RegisterDto) {
+    const existingUser = await this.prisma.user.findUnique({
+      where: { email: dto.email },
+    });
+    if (existingUser) {
+      throw new ConflictException('Email already exists');
+    }
     const hash = await bcrypt.hash(dto.password, 10);
     const user = await this.prisma.user.create({
       data: {
@@ -23,25 +33,39 @@ export class AuthService {
       },
       select: { id: true, name: true, email: true, address: true, role: true },
     });
+
     return user;
   }
 
-  async validate(email: string, password: string) {
+  async validateUser(email: string, password: string) {
     const user = await this.prisma.user.findUnique({ where: { email } });
-    if (!user) throw new UnauthorizedException();
-    const ok = await bcrypt.compare(password, user.passwordHash);
-    if (!ok) throw new UnauthorizedException();
-    return user;
-  }
+    if (!user) {
+      throw new UnauthorizedException('Invalid email or password');
+    }
 
-  async login(user: { id: number; email: string; role: string; name: string }) {
-    const payload = {
-      sub: user.id,
-      role: user.role,
+    const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid email or password');
+    }
+
+    return {
+      id: user.id,
       email: user.email,
       name: user.name,
+      role: user.role,
     };
-    return { accessToken: await this.jwt.signAsync(payload) };
+  }
+
+  async login(email: string, password: string) {
+    const validUser = await this.validateUser(email, password);
+
+    const payload = {
+      sub: validUser.id,
+      role: validUser.role,
+      email: validUser.email,
+      name: validUser.name,
+    };
+    return { accessToken: await this.jwt.signAsync(payload), user: validUser };
   }
 
   async updatePassword(userId: number, newPassword: string) {

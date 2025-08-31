@@ -9,17 +9,21 @@ import { UpdatePasswordDto } from './dto/update-password.dto';
 export class AuthController {
   constructor(private service: AuthService) {}
 
-  @Post('register') register(@Body() dto: RegisterDto) {
-    return this.service.register(dto);
+  @Post('signup')
+  async signup(@Body() dto: RegisterDto) {
+    const newUser = await this.service.signup(dto);
+
+    return {
+      message: 'Signup successful',
+      user: newUser,
+    };
   }
   @Post('login') async login(@Body() dto: LoginDto) {
-    const user = await this.service.validate(dto.email, dto.password);
-    return this.service.login({
-      id: user.id,
-      email: user.email,
-      role: user.role,
-      name: user.name,
-    });
+    const user = await this.service.login(dto.email, dto.password);
+    return {
+      message: 'Login successful',
+      user: user,
+    };
   }
 
   @UseGuards(JwtAuthGuard)
