@@ -1,20 +1,21 @@
 import { useEffect, useState } from "react";
 import RatingStars from "../../components/RatingStars";
 import axiosInstance from "../../api/axios";
-import SearchBar from "./Searchbar";
+import SearchBar from "../../components/Searchbar";
+import { useRatings } from "../../auth/RatingsContext";
 
 interface Store {
   id: number;
   name: string;
   address: string;
   rating: number;
-  userRating?: number;
 }
 
 const StoreList = () => {
   const [stores, setStores] = useState<Store[]>([]);
   const [filteredStores, setFilteredStores] = useState<Store[]>([]);
-  const [userRatings, setUserRatings] = useState<{ [key: number]: number }>({});
+  const { getRating, setRating } = useRatings();
+
   useEffect(() => {
     const fetchStores = async () => {
       try {
@@ -29,24 +30,13 @@ const StoreList = () => {
     fetchStores();
   }, []);
 
-  useEffect(() => {
-    console.log("Updated userRatings:", userRatings);
-  }, [userRatings]);
-
   const submitRating = async (storeId: number, rating: number) => {
     try {
       await axiosInstance.post(`/ratings/${storeId}/give-rating`, {
         value: rating,
       });
 
-      setStores((prev) =>
-        prev.map((s) => (s.id === storeId ? { ...s, userRating: rating } : s))
-      );
-
-      setUserRatings((prev) => ({
-        ...prev,
-        [storeId]: rating,
-      }));
+      setRating(storeId, rating);
     } catch (err) {
       console.error("Failed to submit rating:", err);
     }
@@ -76,11 +66,18 @@ const StoreList = () => {
                 </div>
 
                 <div className="flex flex-col items-center ml-6">
-                  <RatingStars
-                    rating={store.userRating || 0}
-                    onRate={(val) => submitRating(store.id, val)}
-                  />
+                  <RatingStars storeId={store.id} readonly={false} />
                 </div>
+                {/* Button to submit current context rating to backend */}
+                <button
+                  className="mt-2 text-xs bg-blue-500 text-white px-2 py-1 rounded"
+                  onClick={() => {
+                    const rating = getRating(store.id);
+                    if (rating) submitRating(store.id, rating);
+                  }}
+                >
+                  Save Rating
+                </button>
               </div>
             ))}
           </div>

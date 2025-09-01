@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Login from "./pages/Login";
 import Signup from "./pages/Register";
@@ -7,12 +7,15 @@ import AdminDashboard from "./pages/Admin/Dashboard";
 import AdminStores from "./pages/Admin/Stores";
 import OwnerDashboard from "./pages/Owner/Dashboard";
 import StoreList from "./pages/User/StoreList";
+import UserProfilePage from "./pages/UserProfilePage";
 
 const App = () => {
   return (
     <div>
       <Navbar />
       <Routes>
+        {/* redirect to "/login" from "/" */}
+        <Route path="/" element={<Navigate to="/login" />}></Route>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
 
@@ -50,6 +53,15 @@ const App = () => {
           element={
             <ProtectedRoute role="USER">
               <StoreList />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/user/profile"
+          element={
+            <ProtectedRoute role="USER">
+              <UserProfilePage />
             </ProtectedRoute>
           }
         />

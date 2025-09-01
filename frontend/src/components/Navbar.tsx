@@ -1,4 +1,3 @@
-import React from "react";
 import { useAuth } from "../auth/AuthContext";
 import { Link } from "react-router-dom";
 
@@ -13,7 +12,7 @@ const Navbar = () => {
         </div>
 
         <div className="space-x-4">
-          <Link to="/">Home</Link>
+          <Link to="/user/stores">Home</Link>
         </div>
 
         {/* Right section */}
