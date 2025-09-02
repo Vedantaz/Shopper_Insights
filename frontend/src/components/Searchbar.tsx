@@ -37,22 +37,6 @@ const SearchBar: React.FC<SearchBarProps> = ({ stores, onFilter }) => {
   };
 
   return (
-    // <div className="flex mb-4">
-    //   <input
-    //     type="text"
-    //     placeholder="Search for stores..."
-    //     value={query}
-    //     onChange={(e) => setQuery(e.target.value)}
-    //     className="flex-1 p-2 border rounded-l"
-    //   />
-    //   <button
-    //     onClick={handleSearch}
-    //     className="bg-blue-500 text-white px-4 rounded-r"
-    //   >
-    //     Search
-    //   </button>
-    // </div>
-
     <div className="relative mb-4 max-w-3xl mx-auto">
       <input
         type="text"

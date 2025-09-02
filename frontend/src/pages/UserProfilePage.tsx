@@ -30,7 +30,7 @@ export default function UserProfilePage() {
     <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
       {user && <ProfileCard name={user.name} email={user.email} />}
       <h2 className="text-xl font-bold">Stores You Rated</h2>
-      <RatedStoreList ratedStores={ratedStores} />
+      <RatedStoreList />
     </div>
   );
 }

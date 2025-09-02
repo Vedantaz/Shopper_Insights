@@ -31,7 +31,7 @@ export class AdminController {
     return { message: 'Data received successfully on dashboard', data };
   }
 
-  @Post('users-owners-signup')
+  @Post('owners-admin-signup')
   async signUpUser(@Body() body: CreateUserDto, ownerStore?: OwnerStoreDto) {
     const { user, store } = await this.adminService.signUpUser(body);
     let message = 'User signup successfully!';

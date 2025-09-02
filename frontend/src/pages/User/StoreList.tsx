@@ -57,27 +57,21 @@ const StoreList = () => {
                 key={store.id}
                 className="p-4 border rounded shadow bg-white flex items-center justify-between w-full"
               >
-                <div className="grid grid-cols-3 gap-8 flex-1">
-                  <span className="font-semibold">{store.name}</span>
-                  <span className="text-sm text-gray-500">{store.address}</span>
-                  <span className="text-sm">
-                    Overall Rating: {store.rating}
+                <div className="grid grid-cols-2 gap-8 flex-1">
+                  <span className="font-semibold">
+                    {store.name.charAt(0).toUpperCase() + store.name.slice(1)}
+                  </span>
+                  <span className="text-sm text-gray-500">
+                    {store.address.replace(
+                      /(^\s*\d*\s*)(\w)/,
+                      (_, p1, p2) => p1 + p2.toUpperCase()
+                    )}
                   </span>
                 </div>
 
                 <div className="flex flex-col items-center ml-6">
                   <RatingStars storeId={store.id} readonly={false} />
                 </div>
-                {/* Button to submit current context rating to backend */}
-                <button
-                  className="mt-2 text-xs bg-blue-500 text-white px-2 py-1 rounded"
-                  onClick={() => {
-                    const rating = getRating(store.id);
-                    if (rating) submitRating(store.id, rating);
-                  }}
-                >
-                  Save Rating
-                </button>
               </div>
             ))}
           </div>

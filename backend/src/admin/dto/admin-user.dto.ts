@@ -20,7 +20,6 @@ export class OwnerStoreDto {
   @IsString()
   address: string;
 }
-
 export class CreateUserDto {
   @IsString()
   name: string;
