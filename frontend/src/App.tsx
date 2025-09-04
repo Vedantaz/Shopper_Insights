@@ -9,15 +9,25 @@ import OwnerDashboard from "./pages/Owner/Dashboard";
 import StoreList from "./pages/User/StoreList";
 import UserProfilePage from "./pages/UserProfilePage";
 import { RatingsProvider } from "./auth/RatingsContext";
+import { AuthProvider, AuthContext } from "./auth/AuthContext";
+import { useContext } from "react";
 
 const App = () => {
+  const auth = useContext(AuthContext);
+  if (!auth) {
+    throw new Error("AppContent must be used within an AuthProvider");
+  }
+  const { user, loading } = auth;
+
+  if (loading) return <p>Loading...</p>;
+
   return (
     <div>
-      <Navbar />
+      {user && <Navbar />}
       <Routes>
         {/* redirect to "/login" from "/" */}
         <Route path="/" element={<Navigate to="/login" />}></Route>
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={!user && <Login />} />
         <Route path="/signup" element={<Signup />} />
 
         {/* Admin */}

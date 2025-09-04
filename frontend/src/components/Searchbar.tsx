@@ -30,9 +30,9 @@ const SearchBar: React.FC<SearchBarProps> = ({ stores, onFilter }) => {
         setOpen(false);
       }
     };
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside, true);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside, true);
     };
   }, []);
   useEffect(() => {
@@ -55,7 +55,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ stores, onFilter }) => {
   };
 
   return (
-    <div className="relative mb-4 max-w-3xl mx-auto">
+    <div ref={dropdownRef} className="relative mb-4 max-w-3xl mx-auto">
       <input
         type="text"
         placeholder="Search for stores..."
