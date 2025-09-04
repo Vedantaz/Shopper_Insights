@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useRatings } from "../auth/RatingsContext";
 
 interface Store {
   id: number;
@@ -16,7 +17,24 @@ interface SearchBarProps {
 const SearchBar: React.FC<SearchBarProps> = ({ stores, onFilter }) => {
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState<Store[]>([]);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [open, setOpen] = useState(false);
+  const { setFilter } = useRatings();
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
   useEffect(() => {
     if (query.trim() === "") {
       setSuggestions([]);
@@ -43,9 +61,37 @@ const SearchBar: React.FC<SearchBarProps> = ({ stores, onFilter }) => {
         placeholder="Search for stores..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
+        onClick={() => setOpen(!open)}
         className="w-full p-2 border rounded"
       />
+      {/* Dropdown available */}
 
+      {open && (
+        <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg z-10">
+          <ul className="py-1">
+            <li
+              className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+              onClick={() => {
+                setFilter("High Rated");
+                setQuery("High Rated");
+                setOpen(false);
+              }}
+            >
+              High Rated
+            </li>
+            <li
+              className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+              onClick={() => {
+                setFilter("Least Rated");
+                setQuery("Least Rated");
+                setOpen(false);
+              }}
+            >
+              Least Rated
+            </li>
+          </ul>
+        </div>
+      )}
       {/* Dropdown suggestions */}
       {suggestions.length > 0 && (
         <div className="absolute top-full left-0 w-full bg-white border border-gray-300 rounded shadow z-10">

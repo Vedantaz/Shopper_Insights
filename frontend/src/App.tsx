@@ -8,6 +8,7 @@ import AdminStores from "./pages/Admin/Stores";
 import OwnerDashboard from "./pages/Owner/Dashboard";
 import StoreList from "./pages/User/StoreList";
 import UserProfilePage from "./pages/UserProfilePage";
+import { RatingsProvider } from "./auth/RatingsContext";
 
 const App = () => {
   return (
@@ -52,7 +53,9 @@ const App = () => {
           path="/user/stores"
           element={
             <ProtectedRoute role="USER">
-              <StoreList />
+              <RatingsProvider>
+                <StoreList />
+              </RatingsProvider>
             </ProtectedRoute>
           }
         />

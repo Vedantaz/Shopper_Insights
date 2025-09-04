@@ -6,10 +6,14 @@ import React, {
   type ReactNode,
 } from "react";
 
+type FilterType = "High Rated" | "Least Rated" | null;
+
 interface RatingsContextType {
   ratings: Record<number, number>; // storeId -> rating
   getRating: (storeId: number) => number | null;
   setRating: (storeId: number, rating: number) => void;
+  filter: FilterType;
+  setFilter: (f: FilterType) => void;
 }
 
 const RatingsContext = createContext<RatingsContextType | undefined>(undefined);
@@ -18,6 +22,7 @@ export const RatingsProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [ratings, setRatings] = useState<Record<number, number>>({});
+  const [filter, setFilter] = useState<FilterType>(null);
 
   const setRating = (storeId: number, rating: number) => {
     setRatings((prev) => ({
@@ -31,7 +36,9 @@ export const RatingsProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   return (
-    <RatingsContext.Provider value={{ ratings, getRating, setRating }}>
+    <RatingsContext.Provider
+      value={{ ratings, getRating, setRating, filter, setFilter }}
+    >
       {children}
     </RatingsContext.Provider>
   );

@@ -14,7 +14,7 @@ interface Store {
 const StoreList = () => {
   const [stores, setStores] = useState<Store[]>([]);
   const [filteredStores, setFilteredStores] = useState<Store[]>([]);
-  const { getRating, setRating } = useRatings();
+  const { getRating, setRating, filter } = useRatings();
 
   useEffect(() => {
     const fetchStores = async () => {
@@ -29,6 +29,16 @@ const StoreList = () => {
 
     fetchStores();
   }, []);
+
+  const sortedStores = [...filteredStores].sort((a, b) => {
+    if (filter === "High Rated") {
+      return b.rating - a.rating; // highest rating first
+    }
+    if (filter === "Least Rated") {
+      return a.rating - b.rating; // highest rating first
+    }
+    return 0; // no sorting
+  });
 
   const submitRating = async (storeId: number, rating: number) => {
     try {
