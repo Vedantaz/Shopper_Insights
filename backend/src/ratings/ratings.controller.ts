@@ -12,14 +12,13 @@ import {
 } from '@nestjs/common';
 import { RatingsService } from './ratings.service';
 import { CreateRatingDto } from './dto/create-rating.dto';
-import { UpdateRatingDto } from './dto/update-rating.dto';
 import { JwtAuthGuard } from 'src/auth/jwt.guard';
 
 @Controller('ratings')
-@UseGuards(JwtAuthGuard)
 export class RatingsController {
   constructor(private readonly ratingsService: RatingsService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post(':id/give-rating')
   async giveRating(
     @Param('id', ParseIntPipe) storeId: number,
@@ -34,6 +33,7 @@ export class RatingsController {
     return { message: 'Rating has been given to store.', data };
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch('update-rating')
   update(
     @Param('id', ParseIntPipe) storeId: number,
@@ -54,6 +54,7 @@ export class RatingsController {
     return { message: 'Retrieved all ratings successfully!', data };
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('get-rating/:id')
   async findOne(@Req() req) {
     const data = await this.ratingsService.findOne(req.user.userId);
@@ -63,12 +64,35 @@ export class RatingsController {
     };
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete()
   async remove(@Req() req) {
     const data = await this.ratingsService.remove(req.user.userId);
     return {
       message: `Deleted the rating with ${req.user.userId} successfully!`,
       data,
+    };
+  }
+
+  //  get ratings given by a user
+  @UseGuards(JwtAuthGuard)
+  @Get('get-ratings-by-user')
+  async getRatingsByUser(@Req() req) {
+    const ratingsData = await this.ratingsService.getRatingsByUser(
+      req.user.userId,
+    );
+    return {
+      message: `Retrieved all rating by user with ${req.user.userId} id successfully!`,
+      ratingsData,
+    };
+  }
+
+  @Get('get-ratings-for-store/:id')
+  async getRatingsForStore(@Param('id', ParseIntPipe) storeId: number) {
+    const ratingsData = await this.ratingsService.getRatingsForStore(storeId);
+    return {
+      message: `Retrieved all rating for store with ${storeId} id successfully!`,
+      ratingsData,
     };
   }
 }

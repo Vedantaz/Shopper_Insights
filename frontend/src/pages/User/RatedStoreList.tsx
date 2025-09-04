@@ -11,16 +11,18 @@ export default function RatedStoreList() {
   }
 
   return (
-    <div className="mt-6 space-y-4">
-      {ratedIds.map((id) => (
-        <div
-          key={id}
-          className="flex justify-between items-center p-4 border rounded shadow bg-white"
-        >
-          <span className="font-semibold">Store #{id}</span>
-          <RatingStars storeId={parseInt(id)} readonly />
+    <>
+      {Object.entries(ratings).map(([storeId, { name }]) => (
+        <div className="mt-6 space-y-4">
+          <div
+            key={storeId}
+            className="flex justify-between items-center p-4 border rounded shadow bg-white"
+          >
+            <span className="font-semibold">{name}</span>
+            <RatingStars storeId={parseInt(storeId)} readonly />
+          </div>
         </div>
       ))}
-    </div>
+    </>
   );
 }

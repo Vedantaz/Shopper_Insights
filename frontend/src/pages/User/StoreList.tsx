@@ -14,7 +14,7 @@ interface Store {
 const StoreList = () => {
   const [stores, setStores] = useState<Store[]>([]);
   const [filteredStores, setFilteredStores] = useState<Store[]>([]);
-  const { getRating, setRating, filter } = useRatings();
+  const { filter } = useRatings();
 
   useEffect(() => {
     const fetchStores = async () => {
@@ -40,17 +40,6 @@ const StoreList = () => {
     return 0; // no sorting
   });
 
-  const submitRating = async (storeId: number, rating: number) => {
-    try {
-      await axiosInstance.post(`/ratings/${storeId}/give-rating`, {
-        value: rating,
-      });
-
-      setRating(storeId, rating);
-    } catch (err) {
-      console.error("Failed to submit rating:", err);
-    }
-  };
   return (
     <>
       <div className="flex justify-center items-center bg-gray-50">

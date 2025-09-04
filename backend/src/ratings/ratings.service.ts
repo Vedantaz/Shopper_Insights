@@ -33,4 +33,18 @@ export class RatingsService {
   remove(id: number) {
     return this.prisma.rating.delete({ where: { id: id } });
   }
+
+  async getRatingsByUser(userId: number) {
+    return await this.prisma.rating.findMany({
+      where: { userId: userId },
+      include: { store: true },
+    });
+  }
+
+  async getRatingsForStore(storeId: number) {
+    return await this.prisma.rating.findMany({
+      where: { storeId: storeId },
+      include: { user: true },
+    });
+  }
 }

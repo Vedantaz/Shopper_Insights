@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaStar } from "react-icons/fa";
 import { useRatings } from "../auth/RatingsContext";
+import axiosInstance from "../api/axios";
 interface RatingStarsProps {
   storeId: number;
   readonly?: boolean;
@@ -12,12 +13,47 @@ const RatingStars: React.FC<RatingStarsProps> = ({
 }) => {
   const { getRating, setRating } = useRatings();
   const [hover, setHover] = useState<number | null>(null);
+  const [currentRating, setCurrentRating] = useState<number>(0);
+  const [loading, setLoading] = useState(false);
 
-  const currentRating = getRating(storeId) ?? 0;
+  useEffect(() => {
+    const fetchRating = async () => {
+      try {
+        const res = await axiosInstance.get(`/ratings/get-ratings-by-user`);
+        console.log(res.data.ratingsData);
+        if (res.data?.ratingsData) {
+          const ratingForThisStore = res.data.ratingsData.find(
+            (r: any) => r.storeId == storeId
+          );
+          if (ratingForThisStore) {
+            setCurrentRating(ratingForThisStore.value);
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching rating:", err);
+      }
+    };
+    fetchRating();
+  }, []);
 
-  const handleClick = (star: number) => {
-    if (!readonly) {
-      setRating(storeId, star);
+  const handleRating = async (value: number) => {
+    if (readonly || loading) return;
+
+    const prevRating = currentRating;
+    setCurrentRating(value); // immediate UI update
+    setRating(storeId, value);
+
+    try {
+      setLoading(true);
+      await axiosInstance.post(`/ratings/${storeId}/give-rating`, {
+        value: value,
+      });
+    } catch (error) {
+      console.error("Failed to submit rating:", error);
+      setRating(storeId, currentRating);
+      setCurrentRating(prevRating);
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -32,7 +68,7 @@ const RatingStars: React.FC<RatingStarsProps> = ({
             className={`cursor-pointer transition-colors duration-200 ${
               isActive ? "text-yellow-400" : "text-gray-300"
             }`}
-            onClick={() => handleClick(star)}
+            onClick={() => handleRating(star)}
             onMouseEnter={() => setHover(star)}
             onMouseLeave={() => setHover(null)}
           />
