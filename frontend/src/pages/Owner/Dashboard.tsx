@@ -11,16 +11,16 @@ import {
 } from "recharts";
 
 const OwnerDashboard = () => {
-  const { ratings } = useRatings(); // user’s ratings context
+  const { ratings } = useRatings();
   const [stores, setStores] = useState<any[]>([]);
   const [ownerName, setOwnerName] = useState("Owner");
 
   useEffect(() => {
     const fetchStores = async () => {
       try {
-        const res = await axiosInstance.get("/stores/get-all-stores"); // 👈 only fetch stores owned by logged-in owner
+        const res = await axiosInstance.get("/stores/get-all-stores");
         setStores(res.data.data);
-        setOwnerName(res.data.ownerName); // if backend sends it
+        setOwnerName(res.data.ownerName);
       } catch (err) {
         console.error("Error fetching stores:", err);
       }
@@ -33,7 +33,8 @@ const OwnerDashboard = () => {
   const avgRating =
     totalRatings > 0
       ? (
-          Object.values(ratings).reduce((acc, r) => acc + r, 0) / totalRatings
+          Object.values(ratings).reduce((acc, r) => acc + r.value, 0) /
+          totalRatings
         ).toFixed(1)
       : "N/A";
 

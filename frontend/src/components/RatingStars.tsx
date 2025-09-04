@@ -20,7 +20,6 @@ const RatingStars: React.FC<RatingStarsProps> = ({
     const fetchRating = async () => {
       try {
         const res = await axiosInstance.get(`/ratings/get-ratings-by-user`);
-        console.log(res.data.ratingsData);
         if (res.data?.ratingsData) {
           const ratingForThisStore = res.data.ratingsData.find(
             (r: any) => r.storeId == storeId

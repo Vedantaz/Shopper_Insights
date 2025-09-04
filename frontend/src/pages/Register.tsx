@@ -11,6 +11,7 @@ const Signup = () => {
     email: "",
     address: "",
     password: "",
+    role:""
   });
   const { login } = useAuth();
   const [error, setError] = useState("");
@@ -33,12 +34,12 @@ const Signup = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-blue-100 to-purple-100">
+    <div className="flex justify-center bg-gradient-to-r from-blue-100 to-purple-100 min-h-screen py-6  ">
       <form
         onSubmit={handleSubmit}
-        className="bg-white shadow-lg rounded-xl p-8 w-96 transform transition-all duration-300 hover:shadow-2xl"
+        className="bg-white shadow-lg rounded-xl p-6 py-4 w-96 transform transition-all duration-300 hover:shadow-2xl max-h-screen overflow-y-auto"
       >
-        <h2 className="text-3xl font-extrabold mb-6 text-center text-gray-800">
+        <h2 className="text-3xl font-extrabold mb-6 mt-3 text-center text-gray-800">
           Create an Account ✨
         </h2>
 
@@ -46,7 +47,7 @@ const Signup = () => {
           <p className="text-red-500 mb-6 text-sm text-center">{error}</p>
         )}
 
-        <div className="mb-6">
+        <div className="mb-2">
           <label className="block text-gray-600 mb-2 text-sm font-medium">
             Name
           </label>
@@ -60,7 +61,7 @@ const Signup = () => {
           />
         </div>
 
-        <div className="mb-6">
+        <div className="mb-2">
           <label className="block text-gray-600 mb-2 text-sm font-medium">
             Email
           </label>
@@ -74,7 +75,7 @@ const Signup = () => {
           />
         </div>
 
-        <div className="mb-6">
+        <div className="mb-2">
           <label className="block text-gray-600 mb-2 text-sm font-medium">
             Address
           </label>
@@ -101,10 +102,23 @@ const Signup = () => {
             className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition"
           />
         </div>
+        <div className="mb-2">
+          <label className="block text-gray-600 mb-2 text-sm font-medium">
+            Role
+          </label>
+          <input
+            type="password"
+            name="password"
+            placeholder="Enter your password"
+            value={form.role}
+            onChange={handleChange}
+            className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition"
+          />
+        </div>
 
         <button
           type="submit"
-          className="mt-8 w-full bg-green-500 text-white py-3 rounded-lg font-semibold text-lg shadow-md hover:bg-green-600 hover:shadow-lg transition"
+          className="mt-6 w-full bg-green-500 text-white py-3 rounded-lg font-semibold text-lg shadow-md hover:bg-green-600 hover:shadow-lg transition"
         >
           Sign up
         </button>
