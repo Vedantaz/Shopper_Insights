@@ -14,7 +14,7 @@ export class AuthController {
     const newUser = await this.service.signup(dto);
 
     return {
-      message: 'Signup successful',
+      message: `${dto.role} signup successfully`,
       user: newUser,
     };
   }

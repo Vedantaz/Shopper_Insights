@@ -14,6 +14,11 @@ const OwnerDashboard = () => {
   const { ratings } = useRatings();
   const [stores, setStores] = useState<any[]>([]);
   const [ownerName, setOwnerName] = useState("Owner");
+  const [activeBtn, setActiveBtn] = useState("");
+
+  const handleClick = (name: string) => {
+    setActiveBtn((prev) => (prev === name ? "" : name));
+  };
 
   useEffect(() => {
     const fetchStores = async () => {
@@ -47,16 +52,22 @@ const OwnerDashboard = () => {
 
   return (
     <div className="flex">
-      {/* Sidebar */}
       <div className="w-64 bg-gray-800 text-white min-h-screen p-6">
-        <h2 className="text-lg font-bold mb-6">Dashboard</h2>
-        <ul className="space-y-4">
-          <li>My Stores</li>
-          <li>Logout</li>
-        </ul>
+        <button
+          className="w-full h-10 text-lg font-bold hover:bg-gray-700 active:bg-indigo-600 px-2 rounded-full flex justify-center items-center cursor-pointer"
+          onClick={() => handleClick("Dashboard")}
+        >
+          Dashboard
+        </button>
+
+        <button
+          className="mt-3 w-full h-10 text-lg font-bold hover:bg-gray-700 active:bg-indigo-600 px-2 rounded-full flex justify-center items-center cursor-pointer"
+          onClick={() => handleClick("My Stores")}
+        >
+          My Stores
+        </button>
       </div>
 
-      {/* Main Content */}
       <div className="flex-1 p-6">
         <h1 className="text-2xl font-bold mb-4">Welcome, {ownerName}</h1>
 

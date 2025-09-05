@@ -7,6 +7,7 @@ import { PrismaService } from '../prisma.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { RegisterDto } from './dto/register.dto';
+import { Role } from 'src/common/role.enum';
 
 @Injectable()
 export class AuthService {
@@ -23,13 +24,17 @@ export class AuthService {
       throw new ConflictException('Email already exists');
     }
     const hash = await bcrypt.hash(dto.password, 10);
+    const role = Role;
+    if (!role) {
+      throw new ConflictException('Role must be defined');
+    }
     const user = await this.prisma.user.create({
       data: {
         name: dto.name,
         email: dto.email,
         address: dto.address,
         passwordHash: hash,
-        role: 'USER',
+        role: (dto.role as Role) || Role.USER,
       },
       select: { id: true, name: true, email: true, address: true, role: true },
     });

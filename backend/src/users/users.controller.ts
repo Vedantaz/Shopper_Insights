@@ -23,7 +23,11 @@ export class UsersController {
 
   @Get('get-all-users')
   async findAll() {
-    return await this.usersService.findAll();
+    const data = await this.usersService.findAll();
+    return {
+      message: 'Fetched all users',
+      data,
+    };
   }
 
   @Get(':id')
