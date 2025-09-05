@@ -38,7 +38,7 @@ model Store {
   name      String   @db.VarChar(60)
   email     String   @db.VarChar(100)
   address   String   @db.VarChar(400)
-  ownerId   Int?     @unique
+  ownerId   Int
   owner     User?    @relation(fields: [ownerId], references: [id])
   ratings   Rating[]
   createdAt DateTime @default(now())

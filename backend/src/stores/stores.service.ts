@@ -7,27 +7,29 @@ import { PrismaService } from 'src/prisma.service';
 @Injectable()
 export class StoresService {
   constructor(private readonly prisma: PrismaService) {}
-  async create(createStoreDto: CreateStoreDto) {
+  async create(createStoreDto: CreateStoreDto, ownerId: number) {
     return await this.prisma.store.create({
       data: {
         name: createStoreDto.name,
         email: createStoreDto.email,
         address: createStoreDto.address,
-        ownerId: createStoreDto.ownerId,
+        ownerId: ownerId,
       },
     });
   }
 
   async findAll() {
-    return await this.prisma.store.findMany();
+    return await this.prisma.store.findMany({
+      include: { owner: { select: { name: true } } },
+    });
   }
 
   async findOne(id: number) {
     return await this.prisma.store.findUnique({ where: { id: id } });
   }
 
-  update(id: number, data: UpdateStoreDto) {
-    return this.prisma.store.update({
+  async update(id: number, data: UpdateStoreDto) {
+    return await this.prisma.store.update({
       where: { id },
       data,
       select: {
@@ -36,6 +38,13 @@ export class StoresService {
         address: true,
         ownerId: true,
       },
+    });
+  }
+
+  async getOwnerStores(ownerId: number) {
+    return await this.prisma.store.findMany({
+      where: { ownerId: ownerId },
+      include: { owner: { select: { name: true } } },
     });
   }
 

@@ -9,8 +9,9 @@ import OwnerDashboard from "./pages/Owner/Dashboard";
 import StoreList from "./pages/User/StoreList";
 import UserProfilePage from "./pages/UserProfilePage";
 import { RatingsProvider } from "./auth/RatingsContext";
-import { AuthProvider, AuthContext } from "./auth/AuthContext";
+import { AuthContext } from "./auth/AuthContext";
 import { useContext } from "react";
+import OwnerStores from "./pages/Owner/OwnerStores";
 
 const App = () => {
   const auth = useContext(AuthContext);
@@ -54,6 +55,14 @@ const App = () => {
           element={
             <ProtectedRoute role="OWNER">
               <OwnerDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/owner/stores"
+          element={
+            <ProtectedRoute role="OWNER">
+              <OwnerStores />
             </ProtectedRoute>
           }
         />

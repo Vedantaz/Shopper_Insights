@@ -9,23 +9,34 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../../auth/AuthContext";
 
 const OwnerDashboard = () => {
   const { ratings } = useRatings();
   const [stores, setStores] = useState<any[]>([]);
   const [ownerName, setOwnerName] = useState("Owner");
-  const [activeBtn, setActiveBtn] = useState("");
+  const location = useLocation();
+  const [activeBtn, setActiveBtn] = useState(location.pathname || "");
+  const navigate = useNavigate();
+  const { user } = useAuth();
 
-  const handleClick = (name: string) => {
-    setActiveBtn((prev) => (prev === name ? "" : name));
+  const handleClick = (path: string) => {
+    if (location.pathname === path) return;
+    console.log(activeBtn);
+    navigate(path);
+    setActiveBtn((prev) => (prev === path ? "" : path));
   };
 
   useEffect(() => {
     const fetchStores = async () => {
       try {
-        const res = await axiosInstance.get("/stores/get-all-stores");
+        const res = await axiosInstance.get(
+          `/stores/${user?.id}/get-owner-stores`
+        );
         setStores(res.data.data);
-        setOwnerName(res.data.ownerName);
+        const OwnerName = res.data.data[0].owner.name;
+        setOwnerName(OwnerName.charAt(0).toUpperCase() + OwnerName.slice(1));
       } catch (err) {
         console.error("Error fetching stores:", err);
       }
@@ -54,15 +65,25 @@ const OwnerDashboard = () => {
     <div className="flex">
       <div className="w-64 bg-gray-800 text-white min-h-screen p-6">
         <button
-          className="w-full h-10 text-lg font-bold hover:bg-gray-700 active:bg-indigo-600 px-2 rounded-full flex justify-center items-center cursor-pointer"
-          onClick={() => handleClick("Dashboard")}
+          className={`w-full h-10 text-lg font-bold px-2 rounded-full flex justify-center items-center cursor-pointer 
+        ${
+          activeBtn === "/owner/dashboard"
+            ? "bg-indigo-600"
+            : "hover:bg-gray-700"
+        }`}
+          onClick={() => {
+            if (activeBtn !== "/owner/dashboard")
+              handleClick("/owner/dashboard");
+          }}
         >
           Dashboard
         </button>
 
         <button
           className="mt-3 w-full h-10 text-lg font-bold hover:bg-gray-700 active:bg-indigo-600 px-2 rounded-full flex justify-center items-center cursor-pointer"
-          onClick={() => handleClick("My Stores")}
+          onClick={() => {
+            if (activeBtn !== "/owner/stores") handleClick("/owner/stores");
+          }}
         >
           My Stores
         </button>

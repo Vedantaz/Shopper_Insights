@@ -22,7 +22,6 @@ const Login = () => {
       localStorage.setItem("token", res.data.user.accessToken);
       localStorage.setItem("user", JSON.stringify(res.data.user));
       login(res.data.user.user);
-      console.log(res.data.user.user.role);
       if (res.data.user.user.role === "ADMIN") navigate("/admin/dashboard");
       else if (res.data.user.user.role === "OWNER")
         navigate("/owner/dashboard");

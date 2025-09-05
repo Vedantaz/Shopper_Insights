@@ -3,6 +3,14 @@ import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const { user, logout } = useAuth();
+  let target = "/user/stores";
+  if (user?.role === "OWNER") target = "/owner/stores";
+  else target = "/admin/stores";
+
+  let targetProfile = "/user/profile";
+
+  let targetDashboard = "/owner/dashboard";
+  if (user?.role === "ADMIN") targetDashboard = "/admin/dashboard";
 
   return (
     <nav className="sticky top-0 bg-blue-600 items-center text-white p-4 flex justify-between">
@@ -12,25 +20,25 @@ const Navbar = () => {
         </div>
 
         <div className="space-x-4">
-          <Link to="/user/stores">Home</Link>
+          <Link to={targetDashboard}>Home</Link>
         </div>
-
-        {/* Right section */}
 
         <div className="flex items-center space-x-4">
           <>
             <Link
-              to="/user/stores"
+              to={target}
               className="bg-green-500 px-3 py-1 rounded hover:bg-green-600"
             >
               Stores
             </Link>
-            <Link
-              to="/user/profile"
-              className="bg-yellow-500 px-3 py-1 rounded hover:bg-yellow-600"
-            >
-              Profile
-            </Link>
+            {user?.role === "USER" && (
+              <Link
+                to={targetProfile}
+                className="bg-yellow-500 px-3 py-1 rounded hover:bg-yellow-600"
+              >
+                Profile
+              </Link>
+            )}
           </>
         </div>
       </div>
