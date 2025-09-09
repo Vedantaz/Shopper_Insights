@@ -12,9 +12,11 @@ import { RatingsProvider } from "./auth/RatingsContext";
 import { AuthContext } from "./auth/AuthContext";
 import { useContext } from "react";
 import OwnerStores from "./pages/Owner/OwnerStores";
+import "@fortawesome/fontawesome-free/css/all.min.css";
 
 const App = () => {
   const auth = useContext(AuthContext);
+
   if (!auth) {
     throw new Error("AppContent must be used within an AuthProvider");
   }
@@ -28,7 +30,7 @@ const App = () => {
       <Routes>
         {/* redirect to "/login" from "/" */}
         <Route path="/" element={<Navigate to="/login" />}></Route>
-        <Route path="/login" element={!user && <Login />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
 
         {/* Admin */}

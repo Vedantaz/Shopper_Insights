@@ -17,28 +17,6 @@ export default function OwnerStores() {
   const [stores, setStores] = useState<Store[]>([]);
   const { user } = useAuth();
   const [editingStore, setEditingStore] = useState<Store | null>(null);
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    address: "",
-  });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleCreate = async () => {
-    try {
-      const res = await axiosInstance.post("/stores/create", form);
-      const newStore = res.data.data;
-      setStores((prev) => [...prev, newStore]);
-
-      setForm({ name: "", email: "", address: "" });
-    } catch (error) {
-      console.error("Error catching store: ", error);
-    }
-  };
 
   useEffect(() => {
     const fetchOwnerStores = async () => {
@@ -62,7 +40,13 @@ export default function OwnerStores() {
           address: editingStore.address,
         });
         const newStore = res.data.data;
-        setStores((prev) => [...prev, newStore]);
+        const storeWithOwner = {
+          ...newStore,
+          owner: { name: user?.name },
+        };
+        console.log(user?.name, user);
+        setStores((prev) => [...prev, storeWithOwner]);
+        setEditingStore(null);
       } else {
         await axiosInstance.patch(`/stores/update/${editingStore.id}`, {
           editingStore,
@@ -89,71 +73,153 @@ export default function OwnerStores() {
 
   return (
     <>
-      <button
-        onClick={() =>
-          setEditingStore({
-            name: "",
-            email: "",
-            address: "",
-          })
-        }
-        className="mb-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-      >
-        ➕ Add Store
-      </button>
-
-      <div className="overflow-x-auto mt-4 mx-4">
-        <table className="table-auto w-full border-collapse border border-gray-300">
-          <thead className="bg-gray-200">
+      <div className="flex h-16 items-center justify-end px-4 mt-4 ">
+        <button
+          onClick={() =>
+            setEditingStore({
+              name: "",
+              email: "",
+              address: "",
+            })
+          }
+          className=" bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
+          <i className="fas fa-plus"></i>
+        </button>
+      </div>
+      <div className="overflow-x-auto mx-4 mt-6">
+        <table className="min-w-full border-collapse text-sm text-gray-200">
+          <thead className="bg-gray-800 text-gray-200">
             <tr>
-              <th className="border border-gray-300 px-4 py-2">Id</th>
-              <th className="border border-gray-300 px-4 py-2">Name</th>
-              <th className="border border-gray-300 px-4 py-2">Address</th>
-              <th className="border border-gray-300 px-4 py-2">Owner</th>
-              <th className="border border-gray-300 px-4 py-2">Email</th>
-              <th className="border px-4 py-2">Actions</th>
+              <th className="border border-gray-700 px-4 py-2 text-left">Id</th>
+              <th className="border border-gray-700 px-4 py-2 text-left">
+                Name
+              </th>
+              <th className="border border-gray-700 px-4 py-2 text-left">
+                Address
+              </th>
+              <th className="border border-gray-700 px-4 py-2 text-left">
+                Owner
+              </th>
+              <th className="border border-gray-700 px-4 py-2 text-left">
+                Email
+              </th>
+              <th className="border border-gray-700 px-4 py-2 text-center">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>
-            {stores.map((store) => {
-              return (
-                <tr key={store.id} className="hover:bg-gray-100">
-                  <td className="border border-gray-300 px-4 py-2">
-                    {store.ownerId}
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    {store.name}
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    {store.address}
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    {store.owner?.name}
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    {store.email}
-                  </td>
-                  <td className="border px-4 py-2 flex gap-2">
-                    <button
-                      onClick={() => setEditingStore(store)}
-                      className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(store?.id || 0)}
-                      className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
+            {stores.map((store, idx) => (
+              <tr
+                key={store.id}
+                className={`${
+                  idx % 2 === 0 ? "bg-gray-900" : "bg-gray-800"
+                } hover:bg-gray-700 transition-colors duration-200`}
+              >
+                <td className="border border-gray-700 px-4 py-3 text-gray-200">
+                  {store.ownerId}
+                </td>
+                <td className="border border-gray-700 px-4 py-3 text-gray-200">
+                  {store.name}
+                </td>
+                <td className="border border-gray-700 px-4 py-3 text-gray-200">
+                  {store.address}
+                </td>
+                <td className="border border-gray-700 px-4 py-3 text-gray-200">
+                  {store.owner?.name}
+                </td>
+                <td className="border border-gray-700 px-4 py-3 text-gray-200">
+                  {store.email}
+                </td>
+                <td className="border border-gray-700 px-4 py-3 flex justify-center gap-2">
+                  {/* Edit Button */}
+                  <button
+                    onClick={() => setEditingStore(store)}
+                    className="bg-blue-600 hover:bg-blue-500 p-2 rounded text-white transition-colors duration-200"
+                  >
+                    <i className="fas fa-edit"></i>
+                  </button>
+
+                  {/* Delete Button */}
+                  <button
+                    onClick={() => handleDelete(store?.id || 0)}
+                    className="bg-red-600 hover:bg-red-500 p-2 rounded text-white transition-colors duration-200"
+                  >
+                    <i className="fas fa-trash-alt"></i>
+                  </button>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
+
       {editingStore && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gray-900 text-gray-200 p-6 rounded-lg shadow-lg w-96">
+            <h2 className="text-xl font-bold mb-4">
+              {editingStore?.id ? "Edit Store" : "Add Store"}
+            </h2>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSaveEdit();
+              }}
+              className="flex flex-col gap-4"
+            >
+              <input
+                type="text"
+                value={editingStore.name}
+                onChange={(e) =>
+                  setEditingStore({ ...editingStore, name: e.target.value })
+                }
+                className="bg-gray-800 border border-gray-700 rounded px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                placeholder="Store Name"
+              />
+
+              <input
+                type="email"
+                value={editingStore.email}
+                onChange={(e) =>
+                  setEditingStore({ ...editingStore, email: e.target.value })
+                }
+                className="bg-gray-800 border border-gray-700 rounded px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                placeholder="Email"
+              />
+
+              <input
+                type="text"
+                value={editingStore.address}
+                onChange={(e) =>
+                  setEditingStore({ ...editingStore, address: e.target.value })
+                }
+                className="bg-gray-800 border border-gray-700 rounded px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                placeholder="Address"
+              />
+
+              <div className="flex justify-end gap-2 mt-4">
+                <button
+                  type="button"
+                  onClick={() => setEditingStore(null)}
+                  className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded text-gray-200"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded text-white"
+                >
+                  Save
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* {editingStore && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-96">
             <h2 className="text-xl font-bold mb-4">
@@ -213,7 +279,7 @@ export default function OwnerStores() {
             </form>
           </div>
         </div>
-      )}
+      )} */}
     </>
   );
 }

@@ -1,4 +1,13 @@
-import { Body, Controller, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Patch,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -28,7 +37,21 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Patch('password')
-  updatePassword(@Req() req, @Body() dto: UpdatePasswordDto) {
-    return this.service.updatePassword(req.user.userId, dto.newPassword);
+  async updatePassword(@Req() req, @Body() dto: UpdatePasswordDto) {
+    return await this.service.updatePassword(req.user.userId, dto.newPassword);
+  }
+
+  @Get('/verify')
+  verifyToken(@Req() req, @Res() res) {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ valid: false });
+
+    const result = this.service.verify(token);
+
+    if (!result.valid) {
+      return res.status(401).json({ valid: false });
+    }
+
+    return res.status(200).json({ valid: true, payload: result.payload });
   }
 }

@@ -84,7 +84,7 @@ export class AdminService {
       items.map(async (u) => {
         if (u.role === 'OWNER' && u.store) {
           const agg = await this.prisma.rating.aggregate({
-            where: { storeId: u.store.id },
+            where: { storeId: u.id },
             _avg: { value: true },
           });
           return {
@@ -113,7 +113,7 @@ export class AdminService {
     if (!u) return null;
     if (u.role === 'OWNER' && u.store) {
       const agg = await this.prisma.rating.aggregate({
-        where: { storeId: u.store.id },
+        where: { storeId: u.id },
         _avg: { value: true },
       });
       return {

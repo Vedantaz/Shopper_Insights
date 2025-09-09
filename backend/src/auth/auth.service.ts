@@ -8,13 +8,20 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { RegisterDto } from './dto/register.dto';
 import { Role } from 'src/common/role.enum';
+import jwt from 'jsonwebtoken';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
+  private readonly JWT_SECRET: string;
   constructor(
     private prisma: PrismaService,
     private jwt: JwtService,
-  ) {}
+    private configService: ConfigService,
+  ) {
+    this.JWT_SECRET =
+      this.configService.get<string>('JWT_SECRET') || 'changeIt';
+  }
 
   async signup(dto: RegisterDto) {
     const existingUser = await this.prisma.user.findUnique({
@@ -80,5 +87,14 @@ export class AuthService {
       data: { passwordHash },
     });
     return { success: true };
+  }
+
+  verify(token: string): { valid: boolean; payload?: any } {
+    try {
+      const payload = jwt.verify(token, this.JWT_SECRET);
+      return { valid: true, payload };
+    } catch (err) {
+      return { valid: false };
+    }
   }
 }

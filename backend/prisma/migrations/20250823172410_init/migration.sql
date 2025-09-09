@@ -23,7 +23,7 @@ CREATE TABLE `Store` (
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
-    UNIQUE INDEX `Store_ownerId_key`(`ownerId`),
+    UNIQUE INDEX `Store_address_key`(`address`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -48,9 +48,3 @@ ALTER TABLE `Rating` ADD CONSTRAINT `Rating_userId_fkey` FOREIGN KEY (`userId`) 
 
 -- AddForeignKey
 ALTER TABLE `Rating` ADD CONSTRAINT `Rating_storeId_fkey` FOREIGN KEY (`storeId`) REFERENCES `Store`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
-
--- AddConstraints
-ALTER TABLE "Rating"
-ADD CONSTRAINT value_gte_1 CHECK (value >= 1),
-ADD CONSTRAINT value_lte_5 CHECK (value <= 5);

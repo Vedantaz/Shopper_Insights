@@ -26,18 +26,18 @@ model User{
   address       String      @db.VarChar(400)
   passwordHash  String  
   role          Role        @default(USER)
-  store         Store?  
   ratings       Rating[]
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 
+  store         Store[]
 }
 
 model Store {
   id        Int      @id @default(autoincrement())
   name      String   @db.VarChar(60)
   email     String   @db.VarChar(100)
-  address   String   @db.VarChar(400)
+  address   String   @unique            @db.VarChar(400)
   ownerId   Int
   owner     User?    @relation(fields: [ownerId], references: [id])
   ratings   Rating[]

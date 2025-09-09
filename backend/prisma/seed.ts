@@ -27,17 +27,6 @@ async function main() {
     },
   });
 
-  await prisma.store.upsert({
-    where: { ownerId: owner.id },
-    update: {},
-    create: {
-      name: 'Blue Mart',
-      email: 'store@bluemart.com',
-      address: '221B Baker St',
-      ownerId: owner.id,
-    },
-  });
-
   console.log({ admin: admin.email });
 }
 main().finally(() => prisma.$disconnect());

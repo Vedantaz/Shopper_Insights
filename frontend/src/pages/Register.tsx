@@ -11,22 +11,26 @@ const Signup = () => {
     email: "",
     address: "",
     password: "",
-    role:""
+    role: "",
   });
   const { login } = useAuth();
   const [error, setError] = useState("");
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    e:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.ChangeEvent<HTMLSelectElement>
+  ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await axiosInstance.post("/auth/signup", form);
+      // const res = await axiosInstance.post("/auth/signup", form);
 
-      login(res.data.user);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+      // login(res.data.user);
+      // localStorage.setItem("user", JSON.stringify(res.data.user));
       navigate("/login");
     } catch (err: any) {
       setError(err.response?.data?.message || "Signup failed");
@@ -106,14 +110,17 @@ const Signup = () => {
           <label className="block text-gray-600 mb-2 text-sm font-medium">
             Role
           </label>
-          <input
-            type="password"
-            name="password"
-            placeholder="Enter your password"
+          <select
+            name="role"
             value={form.role}
             onChange={handleChange}
-            className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition"
-          />
+            required
+          >
+            <option value="">Select a Role</option>
+            <option value="ADMIN">Admin</option>
+            <option value="USER">User</option>
+            <option value="OWNER">Owner</option>
+          </select>
         </div>
 
         <button

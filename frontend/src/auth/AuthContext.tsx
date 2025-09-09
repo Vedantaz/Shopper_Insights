@@ -6,6 +6,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import axiosInstance from "../api/axios";
 
 type User = {
   id: number;
@@ -28,6 +29,7 @@ export const AuthContext = createContext<AuthContextType | undefined>(
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User>(null);
   const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const login = (userData: User) => {
     setUser(userData);
@@ -35,8 +37,31 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
+    const token = localStorage.getItem("token");
+
     if (storedUser) setUser(JSON.parse(storedUser));
     setLoading(false);
+
+    const checkVerify = async () => {
+      try {
+        const res = await axiosInstance.get(`/auth/verify`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = res.data;
+
+        if (data.valid) {
+          setIsAuthenticated(true);
+        } else {
+          localStorage.removeItem("token");
+          setIsAuthenticated(false);
+        }
+      } catch (err) {
+        console.error("Token verification failed:", err);
+        localStorage.removeItem("token");
+        setIsAuthenticated(false);
+      }
+    };
+    checkVerify();
   }, []);
 
   const logout = () => {
