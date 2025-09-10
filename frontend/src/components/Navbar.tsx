@@ -5,7 +5,7 @@ const Navbar = () => {
   const { user, logout } = useAuth();
   let target = "/user/stores";
   if (user?.role === "OWNER") target = "/owner/stores";
-  else target = "/admin/stores";
+  else if (user?.role === "ADMIN") target = "/admin/stores";
 
   let targetProfile = "/user/profile";
 

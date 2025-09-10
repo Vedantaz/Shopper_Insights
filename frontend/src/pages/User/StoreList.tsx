@@ -30,16 +30,6 @@ const StoreList = () => {
     fetchStores();
   }, []);
 
-  const sortedStores = [...filteredStores].sort((a, b) => {
-    if (filter === "High Rated") {
-      return b.rating - a.rating; // highest rating first
-    }
-    if (filter === "Least Rated") {
-      return a.rating - b.rating; // highest rating first
-    }
-    return 0; // no sorting
-  });
-
   return (
     <>
       <div className="flex justify-center items-center bg-gray-50">
