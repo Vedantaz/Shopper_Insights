@@ -46,17 +46,38 @@ export class UsersService {
     };
   }
 
-  findAll() {
-    return this.prisma.user.findMany({
+  async findAll() {
+    const users = this.prisma.user.findMany({
       select: {
         id: true,
         name: true,
         email: true,
         address: true,
         role: true,
-        createdAt: true,
       },
     });
+
+    const ratings = await this.prisma.rating.groupBy({
+      by: 'userId',
+      _avg: {
+        value: true,
+      },
+    });
+
+    const ratingsMap = ratings.reduce(
+      (acc, cur) => {
+        acc[cur.userId] = cur._avg.value;
+        return acc;
+      },
+      {} as Record<number, number | null>,
+    );
+
+    const usersWithRatings = (await users).map((user) => ({
+      ...user,
+      avgRating: ratingsMap[user.id] || 0,
+    }));
+
+    return usersWithRatings;
   }
 
   findOne(id: number) {

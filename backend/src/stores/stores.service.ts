@@ -19,9 +19,36 @@ export class StoresService {
   }
 
   async findAll() {
-    return await this.prisma.store.findMany({
+    // find all stores
+    // map stores and find ratings for the same
+    // RETURN THE STORES WITH RATING MAPPED
+
+    const stores = await this.prisma.store.findMany({
       include: { owner: { select: { name: true } } },
     });
+
+    // 2. Group ratings by storeId and calculate average rating
+    const ratings = await this.prisma.rating.groupBy({
+      by: ['storeId'],
+      _avg: {
+        value: true,
+      },
+    });
+
+    // 3. Create a mapping from storeId to average rating
+    const ratingMap = ratings.reduce((acc, cur) => {
+      acc[cur.storeId] = cur._avg.value;
+      return acc;
+    }, {});
+
+    // 4. Map over stores and attach the average rating
+    const storesWithRatings = stores.map((store) => ({
+      ...store,
+      rating: ratingMap[store.id] || 0, // if no rating, default to 0
+    }));
+
+    // 5. Return the final result
+    return storesWithRatings;
   }
 
   async findOne(id: number) {

@@ -63,7 +63,7 @@ const OwnerDashboard = () => {
 
   return (
     <div className="flex">
-      <div className="w-64 bg-gray-800 text-white min-h-screen p-6">
+      {/* <div className="w-40 bg-gray-800 text-white min-h-screen p-6">
         <button
           className={`w-full h-10 text-lg font-bold px-2 rounded-full flex justify-center items-center cursor-pointer 
         ${
@@ -76,7 +76,7 @@ const OwnerDashboard = () => {
               handleClick("/owner/dashboard");
           }}
         >
-          Dashboard
+          <i className="fas fa-tachometer-alt"></i>
         </button>
 
         <button
@@ -85,8 +85,49 @@ const OwnerDashboard = () => {
             if (activeBtn !== "/owner/stores") handleClick("/owner/stores");
           }}
         >
-          My Stores
+          <i className="fas fa-store"></i>
         </button>
+      </div> */}
+
+      <div className="w-32 bg-gray-800 text-white min-h-screen p-6 flex flex-col gap-3 relative">
+        {/* Dashboard Button */}
+        <div className="relative group">
+          <button
+            className={`w-full h-10 text-lg font-bold flex justify-center items-center rounded-full
+        ${
+          activeBtn === "/owner/dashboard"
+            ? "bg-indigo-600"
+            : "hover:bg-gray-700"
+        }`}
+            onClick={() => {
+              if (activeBtn !== "/owner/dashboard")
+                handleClick("/owner/dashboard");
+            }}
+          >
+            <i className="fas fa-tachometer-alt"></i>
+          </button>
+          <span className="absolute left-full top-1/2 -translate-y-1/2 ml-2 bg-gray-900 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 whitespace-nowrap shadow-lg transition-opacity duration-200">
+            Dashboard
+          </span>
+        </div>
+
+        {/* Stores Button */}
+        <div className="relative group">
+          <button
+            className={`w-full h-10 text-lg font-bold flex justify-center items-center rounded-full
+        ${
+          activeBtn === "/owner/stores" ? "bg-indigo-600" : "hover:bg-gray-700"
+        }`}
+            onClick={() => {
+              if (activeBtn !== "/owner/stores") handleClick("/owner/stores");
+            }}
+          >
+            <i className="fas fa-store"></i>
+          </button>
+          <span className="absolute left-full top-1/2 -translate-y-1/2 ml-2 bg-gray-900 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 whitespace-nowrap shadow-lg transition-opacity duration-200">
+            Stores
+          </span>
+        </div>
       </div>
 
       <div className="flex-1 p-6">

@@ -1,9 +1,34 @@
+import { useEffect, useState } from "react";
+import axiosInstance from "../../api/axios";
+interface Store {
+  id: number;
+  name: string;
+  email: string;
+  address: string;
+  ownerId: number;
+  createdAt: string;
+  updatedAt: string;
+  owner?: {
+    name: string;
+  };
+  rating?: number;
+}
 
 const AdminStores = () => {
-  const stores = [
-    { id: 1, name: "Store A", email: "storea@mail.com", address: "Mumbai", rating: 4.2 },
-    { id: 2, name: "Store B", email: "storeb@mail.com", address: "Pune", rating: 3.9 },
-  ];
+  const [stores, setStores] = useState<Store[]>([]);
+
+  useEffect(() => {
+    const fetchStores = async () => {
+      try {
+        const res = await axiosInstance.get("/stores/get-all-stores");
+        setStores(res.data.data);
+        console.log(res.data.data);
+      } catch (error) {
+        console.error("Error fetching stores", error);
+      }
+    };
+    fetchStores();
+  }, []);
 
   return (
     <div className="p-4">
@@ -18,14 +43,22 @@ const AdminStores = () => {
           </tr>
         </thead>
         <tbody>
-          {stores.map((store) => (
-            <tr key={store.id} className="border">
-              <td className="p-2">{store.name}</td>
-              <td>{store.email}</td>
-              <td>{store.address}</td>
-              <td>{store.rating}</td>
+          {stores.length > 0 ? (
+            stores.map((store) => (
+              <tr key={store.id} className="border">
+                <td className="p-2">{store.name}</td>
+                <td className="p-2">{store.email}</td>
+                <td className="p-2">{store.address}</td>
+                <td className="p-2">{store.rating ? store.rating : "N/A"}</td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan={4} className="text-center p-4">
+                No stores found.
+              </td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
     </div>

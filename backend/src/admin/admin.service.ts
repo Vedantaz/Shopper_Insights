@@ -46,7 +46,7 @@ export class AdminService {
     return { user, store };
   }
 
-  async listUsers(userData: CreateUserDto, data: ListUsersDto) {
+  async showUsersPerConstraint(userData: CreateUserDto, data: ListUsersDto) {
     const { name, email, address, role } = userData;
     const where: any = {
       AND: [
