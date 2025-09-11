@@ -30,7 +30,7 @@ const Signup = () => {
       const res = await axiosInstance.post("/auth/signup", form);
 
       login(res.data.user);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+      sessionStorage.setItem("user", JSON.stringify(res.data.user));
       navigate("/login");
     } catch (err: any) {
       setError(err.response?.data?.message || "Signup failed");

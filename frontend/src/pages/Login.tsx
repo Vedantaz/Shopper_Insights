@@ -19,8 +19,8 @@ const Login = () => {
     e.preventDefault();
     try {
       const res = await axiosInstance.post("/auth/login", form);
-      localStorage.setItem("token", res.data.user.accessToken);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+      sessionStorage.setItem("token", res.data.user.accessToken);
+      sessionStorage.setItem("user", JSON.stringify(res.data.user));
       login(res.data.user.user);
       if (res.data.user.user.role === "ADMIN") navigate("/admin/dashboard");
       else if (res.data.user.user.role === "OWNER")

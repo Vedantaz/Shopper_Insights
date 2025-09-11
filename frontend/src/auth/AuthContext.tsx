@@ -36,8 +36,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    const token = localStorage.getItem("token");
+    const storedUser = sessionStorage.getItem("user");
+    const token = sessionStorage.getItem("token");
 
     if (storedUser) setUser(JSON.parse(storedUser));
     setLoading(false);
@@ -52,12 +52,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (data.valid) {
           setIsAuthenticated(true);
         } else {
-          localStorage.removeItem("token");
+          sessionStorage.removeItem("token");
           setIsAuthenticated(false);
         }
       } catch (err) {
         console.error("Token verification failed:", err);
-        localStorage.removeItem("token");
+        sessionStorage.removeItem("token");
         setIsAuthenticated(false);
       }
     };
@@ -66,8 +66,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
+    sessionStorage.removeItem("user");
+    sessionStorage.removeItem("token");
   };
 
   return (

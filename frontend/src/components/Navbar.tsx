@@ -1,8 +1,11 @@
+import { useEffect, useState } from "react";
 import { useAuth } from "../auth/AuthContext";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const Navbar = () => {
   const { user, logout } = useAuth();
+  const location = useLocation();
+  const [activeBtn, setActiveBtn] = useState(location.pathname || "");
   let target = "/user/stores";
   if (user?.role === "OWNER") target = "/owner/stores";
   else if (user?.role === "ADMIN") target = "/admin/stores";
@@ -12,29 +15,46 @@ const Navbar = () => {
   let targetDashboard = "/owner/dashboard";
   if (user?.role === "ADMIN") targetDashboard = "/admin/dashboard";
 
+  useEffect(() => {
+    setActiveBtn(location.pathname);
+  }, [location.pathname]);
+
   return (
-    <nav className="sticky top-0 bg-blue-600 items-center text-white p-4 flex justify-between">
+    <nav className="sticky top-0 bg-gray-800 items-center text-white p-4 flex justify-between">
       <div className="flex items-center space-x-4">
         <div className="w-10 h-10 flex items-center justify-center rounded-full border-2 border-black bg-white text-blue-600 font-bold">
           L
         </div>
 
-        <div className="space-x-4">
-          <Link to={targetDashboard}>Home</Link>
+        <div className="flex items-center space-x-4">
+          <Link
+            to={targetDashboard}
+            className={` px-3 py-1 rounded ${
+              activeBtn === targetDashboard
+                ? "bg-gray-600 hover:bg-indigo-800"
+                : "bg-indigo-600 hover:bg-indigo-800"
+            } transition-colors duration-200`}
+          >
+            Dashboard
+          </Link>
         </div>
 
         <div className="flex items-center space-x-4">
           <>
             <Link
               to={target}
-              className="bg-green-500 px-3 py-1 rounded hover:bg-green-600"
+              className={` px-3 py-1 rounded ${
+                activeBtn === target
+                  ? "bg-gray-600 hover:bg-indigo-800"
+                  : "bg-indigo-600 hover:bg-indigo-800"
+              } transition-colors duration-200`}
             >
               Stores
             </Link>
             {user?.role === "USER" && (
               <Link
                 to={targetProfile}
-                className="bg-yellow-500 px-3 py-1 rounded hover:bg-yellow-600"
+                className="bg-indigo-600 px-3 py-1 rounded hover:hover:bg-gray-700"
               >
                 Profile
               </Link>

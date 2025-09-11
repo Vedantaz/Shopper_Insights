@@ -9,7 +9,7 @@ export default function ProtectedRoute({
   children: ReactElement;
   role?: string;
 }) {
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
   const { user, loading } = useAuth();
   if (loading) return <div>Loading...</div>;
 
