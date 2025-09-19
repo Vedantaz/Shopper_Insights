@@ -85,7 +85,9 @@ const App = () => {
           path="/user/profile"
           element={
             <ProtectedRoute role="USER">
-              <UserProfilePage />
+              <RatingsProvider>
+                <UserProfilePage />
+              </RatingsProvider>
             </ProtectedRoute>
           }
         />

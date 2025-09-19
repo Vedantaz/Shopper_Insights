@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import RatingStars from "../../components/RatingStars";
 import axiosInstance from "../../api/axios";
 import SearchBar from "../../components/Searchbar";
-import { useRatings } from "../../auth/RatingsContext";
 
 interface Store {
   id: number;
@@ -12,15 +11,12 @@ interface Store {
 }
 
 const StoreList = () => {
-  const [stores, setStores] = useState<Store[]>([]);
   const [filteredStores, setFilteredStores] = useState<Store[]>([]);
-  const { filter } = useRatings();
 
   useEffect(() => {
     const fetchStores = async () => {
       try {
         const res = await axiosInstance.get("/stores/get-all-stores");
-        setStores(res.data.data);
         setFilteredStores(res.data.data);
       } catch (err) {
         console.error("Error fetching stores:", err);
@@ -38,7 +34,7 @@ const StoreList = () => {
             All Stores
           </h2>
 
-          <SearchBar stores={stores} onFilter={setFilteredStores} />
+          <SearchBar stores={filteredStores} onFilter={setFilteredStores} />
 
           <div className="space-y-4 w-full">
             {filteredStores.map((store) => (

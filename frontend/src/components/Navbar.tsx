@@ -27,16 +27,18 @@ const Navbar = () => {
         </div>
 
         <div className="flex items-center space-x-4">
-          <Link
-            to={targetDashboard}
-            className={` px-3 py-1 rounded ${
-              activeBtn === targetDashboard
-                ? "bg-gray-600 hover:bg-indigo-800"
-                : "bg-indigo-600 hover:bg-indigo-800"
-            } transition-colors duration-200`}
-          >
-            Dashboard
-          </Link>
+          {user?.role !== "USER" && (
+            <Link
+              to={targetDashboard}
+              className={` px-3 py-1 rounded ${
+                activeBtn === targetDashboard
+                  ? "bg-gray-600 hover:bg-indigo-800"
+                  : "bg-indigo-600 hover:bg-indigo-800"
+              } transition-colors duration-200`}
+            >
+              Dashboard
+            </Link>
+          )}
         </div>
 
         <div className="flex items-center space-x-4">
@@ -54,7 +56,11 @@ const Navbar = () => {
             {user?.role === "USER" && (
               <Link
                 to={targetProfile}
-                className="bg-indigo-600 px-3 py-1 rounded hover:hover:bg-gray-700"
+                className={` px-3 py-1 rounded ${
+                  activeBtn === targetProfile
+                    ? "bg-gray-600 hover:bg-indigo-800"
+                    : "bg-indigo-600 hover:bg-indigo-800"
+                } transition-colors duration-200`}
               >
                 Profile
               </Link>

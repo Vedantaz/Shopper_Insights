@@ -17,6 +17,11 @@ const RatingStars: React.FC<RatingStarsProps> = ({
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    const ratingsFromContext = getRating(storeId);
+    if (ratingsFromContext) {
+      setCurrentRating(ratingsFromContext.value);
+      return;
+    }
     const fetchRating = async () => {
       try {
         const res = await axiosInstance.get(`/ratings/get-ratings-by-user`);
@@ -33,13 +38,13 @@ const RatingStars: React.FC<RatingStarsProps> = ({
       }
     };
     fetchRating();
-  }, []);
+  });
 
   const handleRating = async (value: number) => {
     if (readonly || loading) return;
 
     const prevRating = currentRating;
-    setCurrentRating(value); // immediate UI update
+    setCurrentRating(value);
     setRating(storeId, value);
 
     try {

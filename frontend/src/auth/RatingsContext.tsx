@@ -27,7 +27,7 @@ export const RatingsProvider: React.FC<{ children: ReactNode }> = ({
     const fetchUserRatings = async () => {
       try {
         const res = await axiosInstance.get("/ratings/get-ratings-by-user");
-        // backend should return something like [{storeId: 1, value: 4}, ...]
+
         const map: Record<number, { value: number; name: string }> = {};
         res.data.ratingsData.forEach((r: any) => {
           map[r.storeId] = { value: r.value, name: r.store.name };

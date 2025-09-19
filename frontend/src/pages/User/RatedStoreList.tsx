@@ -3,9 +3,7 @@ import { useRatings } from "../../auth/RatingsContext";
 
 export default function RatedStoreList() {
   const { ratings } = useRatings();
-
   const ratedIds = Object.keys(ratings);
-
   if (ratedIds.length === 0) {
     return <p className="text-gray-500">You haven’t rated any stores yet.</p>;
   }
