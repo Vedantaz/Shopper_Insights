@@ -38,20 +38,20 @@ const SearchBar: React.FC<SearchBarProps> = ({ stores, onFilter }) => {
   useEffect(() => {
     if (query.trim() === "") {
       setSuggestions([]);
-      onFilter(stores); // reset list
+      onFilter(stores);
     } else {
       const matches = stores.filter((s) =>
         s.name.toLowerCase().includes(query.toLowerCase())
       );
       setSuggestions(matches);
-      onFilter(matches); // live filter
+      onFilter(matches);
     }
   }, [query, stores, onFilter]);
 
   const handleSuggestionClick = (store: Store) => {
     setQuery(store.name);
     setSuggestions([]);
-    onFilter([store]); // show only selected store
+    onFilter(stores);
   };
 
   return (
@@ -64,7 +64,6 @@ const SearchBar: React.FC<SearchBarProps> = ({ stores, onFilter }) => {
         onClick={() => setOpen(!open)}
         className="w-full p-2 border rounded"
       />
-      {/* Dropdown available */}
 
       {open && (
         <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg z-10">
@@ -72,18 +71,16 @@ const SearchBar: React.FC<SearchBarProps> = ({ stores, onFilter }) => {
             <li
               className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
               onClick={() => {
-                setFilter("High Rated");
-                setQuery("High Rated");
+                setFilter("Highly Rated");
                 setOpen(false);
               }}
             >
-              High Rated
+              Highly Rated
             </li>
             <li
               className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
               onClick={() => {
                 setFilter("Least Rated");
-                setQuery("Least Rated");
                 setOpen(false);
               }}
             >

@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import axiosInstance from "../api/axios";
 
-type FilterType = "High Rated" | "Least Rated" | null;
+type FilterType = "Highly Rated" | "Least Rated" | null;
 
 interface RatingsContextType {
   ratings: Record<number, { value: number; name?: string }>; // storeId -> rating

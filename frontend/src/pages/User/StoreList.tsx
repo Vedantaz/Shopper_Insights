@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import RatingStars from "../../components/RatingStars";
 import axiosInstance from "../../api/axios";
 import SearchBar from "../../components/Searchbar";
+import { useRatings } from "../../auth/RatingsContext";
 
 interface Store {
   id: number;
@@ -12,12 +13,15 @@ interface Store {
 
 const StoreList = () => {
   const [filteredStores, setFilteredStores] = useState<Store[]>([]);
+  const [stores, setStores] = useState<Store[]>([]);
+  const { filter } = useRatings();
 
   useEffect(() => {
     const fetchStores = async () => {
       try {
         const res = await axiosInstance.get("/stores/get-all-stores");
         setFilteredStores(res.data.data);
+        setStores(res.data.data);
       } catch (err) {
         console.error("Error fetching stores:", err);
       }
@@ -25,6 +29,18 @@ const StoreList = () => {
 
     fetchStores();
   }, []);
+
+  useEffect(() => {
+    let updated = [...stores];
+
+    if (filter === "Highly Rated") {
+      updated.sort((a, b) => b.rating - a.rating);
+    } else if (filter === "Least Rated") {
+      updated.sort((a, b) => a.rating - b.rating);
+    }
+
+    setFilteredStores(updated);
+  }, [filter, stores]);
 
   return (
     <>
@@ -34,7 +50,7 @@ const StoreList = () => {
             All Stores
           </h2>
 
-          <SearchBar stores={filteredStores} onFilter={setFilteredStores} />
+          <SearchBar stores={stores} onFilter={setFilteredStores} />
 
           <div className="space-y-4 w-full">
             {filteredStores.map((store) => (
